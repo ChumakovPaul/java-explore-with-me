@@ -25,7 +25,6 @@ public class StatMapper {
         StatDto statDto = new StatDto();
         statDto.setApp(stat.getApp());
         statDto.setUri(stat.getUri());
-//        statDto.setApp(stat.getApp());
         return statDto;
     }
 }

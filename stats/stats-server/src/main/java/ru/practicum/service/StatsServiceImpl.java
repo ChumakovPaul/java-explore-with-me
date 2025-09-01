@@ -20,16 +20,11 @@ public class StatsServiceImpl implements StatsService {
     private final StatsRepository statsRepository;
     private final StatMapper statMapper;
 
-
     public void save(StatCreateDto statCreateDto) {
         statsRepository.save(statMapper.toStat(statCreateDto));
     }
 
-
     public List<StatDto> getStats(LocalDateTime start, LocalDateTime end, List<String> uris, Boolean unique) {
-        if (unique) {
-            return statsRepository.findStatsUnique(start, end, uris == null || uris.isEmpty() ? null : uris);
-        }
-        return statsRepository.findStats(start, end, uris == null || uris.isEmpty() ? null : uris);
+        return unique ? statsRepository.findStatsUnique(start, end, uris) : statsRepository.findStats(start, end, uris);
     }
 }

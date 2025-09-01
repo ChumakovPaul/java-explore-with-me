@@ -21,9 +21,9 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class StatsClientImpl implements StatsClient {
     private final RestClient restClient;
-    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-    public StatsClientImpl(@Value("${stats-server.url:http://localhost:9090}") String clientUrl) {
+    public StatsClientImpl(@Value("${explore-with-me.stats-server.url:http://localhost:9090}") String clientUrl) {
         this.restClient = RestClient.builder()
                 .baseUrl(clientUrl)
                 .build();
@@ -37,28 +37,20 @@ public class StatsClientImpl implements StatsClient {
                 .body(statCreateDto)
                 .retrieve()
                 .toBodilessEntity();
-        log.info("сохранили информацию что был запрос");
+        log.info("Saved hit: {}", statCreateDto);
     }
 
 
     @Override
     public Collection<StatDto> getStat(String start, String end, List<String> uris, Boolean unique) {
-        if (start == null || end == null) {
-            log.warn("диапазон не может содержать null");
-            throw new IllegalArgumentException("диапазон не может содержать null");
-        }
-        LocalDateTime startDataTime = LocalDateTime.parse(start, formatter);
-        LocalDateTime endDataTime = LocalDateTime.parse(end, formatter);
-        if (startDataTime.isAfter(endDataTime)) {
-            log.warn("задан не верный диапазон");
-            throw new IllegalArgumentException("задан не верный диапазон");
-        }
+        validateRange(start, end);
         Collection<StatDto> stats = restClient.get()
                 .uri(uriBuilder -> uriGetStats(uriBuilder, start, end, uris, unique))
                 .retrieve()
                 .body(new ParameterizedTypeReference<>() {
                 });
-        log.info("запрос с параметрами");
+        log.info("Getting stats (start={}, end={}, urisCount={}, unique={})",
+                start, end, uris == null ? 0 : uris.size(), unique);
         return stats;
     }
 
@@ -72,7 +64,23 @@ public class StatsClientImpl implements StatsClient {
         if (unique != null) {
             builder.queryParam("unique", unique);
         }
-        log.info("конвертировали url + параметры");
+        log.info("Built URI for stats (start={}, end={}, urisCount={}, unique={})",
+                start, end, uris == null ? 0 : uris.size(), unique);
         return builder.build();
+    }
+
+    private void validateRange(String start, String end) {
+        if (start == null || end == null) {
+            log.warn("Range contains null value: start={}, end={}", start, end);
+            throw new IllegalArgumentException("Range must not contain null");
+        }
+
+        LocalDateTime startDt = LocalDateTime.parse(start, FORMATTER);
+        LocalDateTime endDt = LocalDateTime.parse(end, FORMATTER);
+
+        if (startDt.isAfter(endDt)) {
+            log.warn("Invalid range: start={} is after end={}", start, end);
+            throw new IllegalArgumentException("Invalid range: start is after end");
+        }
     }
 }
