@@ -3,9 +3,9 @@ package ru.practicum.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.practicum.StatCreateDto;
 import ru.practicum.StatDto;
 import ru.practicum.mapper.StatMapper;
-import ru.practicum.StatCreateDto;
 import ru.practicum.repository.StatsRepository;
 
 import java.time.LocalDateTime;
@@ -26,10 +26,10 @@ public class StatsServiceImpl implements StatsService {
     }
 
 
-public List<StatDto> getStats(LocalDateTime start, LocalDateTime end, List<String> uris, Boolean unique) {
-    if (unique) {
-        return statsRepository.findStatsUnique(start, end, uris == null || uris.isEmpty() ? null : uris);
+    public List<StatDto> getStats(LocalDateTime start, LocalDateTime end, List<String> uris, Boolean unique) {
+        if (unique) {
+            return statsRepository.findStatsUnique(start, end, uris == null || uris.isEmpty() ? null : uris);
+        }
+        return statsRepository.findStats(start, end, uris == null || uris.isEmpty() ? null : uris);
     }
-    return statsRepository.findStats(start, end, uris == null || uris.isEmpty() ? null : uris);
 }
-    }

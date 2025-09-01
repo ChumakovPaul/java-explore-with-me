@@ -1,6 +1,5 @@
 package ru.practicum;
 
-import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
@@ -9,6 +8,6 @@ public interface StatsClient {
 
     Collection<StatDto> getStat(String start,
                                 String end,
-                              List<String> uris,
-                              Boolean unique);
+                                List<String> uris,
+                                Boolean unique);
 }

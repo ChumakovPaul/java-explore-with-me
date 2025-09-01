@@ -4,9 +4,9 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import ru.practicum.StatCreateDto;
 import ru.practicum.StatDto;
 import ru.practicum.model.Stat;
-import ru.practicum.StatCreateDto;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @Slf4j

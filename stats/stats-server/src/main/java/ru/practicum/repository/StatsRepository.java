@@ -20,8 +20,8 @@ public interface StatsRepository extends JpaRepository<Stat, Long> {
     )
     List<StatDto> findStats(
             @Param("start") LocalDateTime start,
-                              @Param("end") LocalDateTime end,
-                              @Param("uris") List<String> uris);
+            @Param("end") LocalDateTime end,
+            @Param("uris") List<String> uris);
 
     @Query("SELECT new ru.practicum.StatDto(stat.app, stat.uri, count(DISTINCT stat.ip)) " +
             "FROM Stat as stat " +
@@ -30,6 +30,6 @@ public interface StatsRepository extends JpaRepository<Stat, Long> {
             "GROUP BY stat.app, stat.uri " +
             "ORDER BY COUNT(DISTINCT stat.ip) DESC")
     List<StatDto> findStatsUnique(@Param("start") LocalDateTime start,
-                                    @Param("end") LocalDateTime end,
-                                    @Param("uris") List<String> uris);
+                                  @Param("end") LocalDateTime end,
+                                  @Param("uris") List<String> uris);
 }
