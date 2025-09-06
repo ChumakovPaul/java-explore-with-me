@@ -61,6 +61,17 @@ public class GlobalExceptionHandler {
         );
     }
 
+    @ExceptionHandler(ForbiddenException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ErrorResponse handleForbiddenException(ForbiddenException ex) {
+        return new ErrorResponse(
+                HttpStatus.CONFLICT.name(),
+                "The action is prohibited",
+                ex.getMessage(),
+                LocalDateTime.now().format(FORMATTER)
+        );
+    }
+
     public record ErrorResponse(String status, String reason, String message, String timestamp) {
     }
 }
