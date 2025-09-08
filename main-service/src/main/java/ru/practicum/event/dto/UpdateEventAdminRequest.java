@@ -12,6 +12,7 @@ import lombok.ToString;
 import ru.practicum.event.model.Location;
 
 import java.time.LocalDateTime;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

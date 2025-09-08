@@ -98,6 +98,6 @@ public class PrivateEventServiceImpl implements PrivateEventService {
             event.setState(State.PENDING);
         }
 
-        return eventMapper.toEventFullDto(eventRepository.save(event),userMapper.toUserShortDto(event.getInitiator()));
-}}
-
+        return eventMapper.toEventFullDto(eventRepository.save(event), userMapper.toUserShortDto(event.getInitiator()));
+    }
+}

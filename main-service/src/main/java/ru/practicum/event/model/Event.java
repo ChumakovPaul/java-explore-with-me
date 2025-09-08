@@ -1,8 +1,10 @@
 package ru.practicum.event.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Positive;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import ru.practicum.category.model.Category;
 import ru.practicum.user.model.User;
 
@@ -15,21 +17,6 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @RequiredArgsConstructor
 public class Event {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "initiator")
-    private User initiator;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "categories_id")
-    private Category category;
-    @Column(length = 120, nullable = false)
-    private String title;
-    @Column(length = 2000, nullable = false)
-    private String annotation;
-    @Column(length = 7000, nullable = false)
-    private String description;
     @Enumerated(EnumType.STRING)
     @Column(length = 20, nullable = false)
     State state;
@@ -47,6 +34,19 @@ public class Event {
     LocalDateTime publishedOn;
     @Column(name = "created_on", nullable = false)
     LocalDateTime createdOn;
-
-
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "initiator")
+    private User initiator;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "categories_id")
+    private Category category;
+    @Column(length = 120, nullable = false)
+    private String title;
+    @Column(length = 2000, nullable = false)
+    private String annotation;
+    @Column(length = 7000, nullable = false)
+    private String description;
 }

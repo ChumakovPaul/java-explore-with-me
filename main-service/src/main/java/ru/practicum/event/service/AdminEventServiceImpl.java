@@ -44,10 +44,13 @@ public class AdminEventServiceImpl implements AdminEventService {
         LocalDateTime rangeEnd = params.getRangeEnd();
         int pageNumber = params.getFrom() / params.getSize();
         int pageSize = params.getSize();
-        List<Event> events = eventRepository.getEvents(users
-                , states, categories
-                , rangeStart, rangeEnd
-                , PageRequest.of(pageNumber, pageSize)).getContent();
+        List<Event> events = eventRepository.getEvents(users,
+                        states,
+                        categories,
+                        rangeStart,
+                        rangeEnd,
+                        PageRequest.of(pageNumber, pageSize))
+                .getContent();
         return events.stream()
                 .map(e -> eventMapper.toEventFullDto(e, userMapper.toUserShortDto(e.getInitiator())))
                 .toList();

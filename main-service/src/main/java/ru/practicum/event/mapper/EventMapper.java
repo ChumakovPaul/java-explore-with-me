@@ -1,10 +1,7 @@
 package ru.practicum.event.mapper;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ru.practicum.category.mapper.CategoryMapper;
 import ru.practicum.category.model.Category;
@@ -19,7 +16,6 @@ import ru.practicum.user.model.User;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-//@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @Slf4j
 @Component
 @RequiredArgsConstructor
