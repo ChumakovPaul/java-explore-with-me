@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import ru.practicum.event.model.Event;
-import ru.practicum.event.model.State;
 import ru.practicum.user.model.User;
 
 import java.time.LocalDateTime;
@@ -18,6 +17,11 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @RequiredArgsConstructor
 public class Request {
+    @Enumerated(EnumType.STRING)
+    @Column(length = 20, nullable = false)
+    Status status;
+    @Column(name = "created_at", nullable = false)
+    LocalDateTime created;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -27,9 +31,4 @@ public class Request {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "event_id", nullable = false)
     private Event event;
-    @Enumerated(EnumType.STRING)
-    @Column(length = 20, nullable = false)
-    Status status;
-    @Column(name = "created_at", nullable = false)
-    LocalDateTime created;
 }

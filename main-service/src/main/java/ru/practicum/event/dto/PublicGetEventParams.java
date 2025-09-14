@@ -3,7 +3,6 @@ package ru.practicum.event.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import ru.practicum.event.model.Sort;
-import ru.practicum.event.model.State;
 
 import java.time.LocalDateTime;
 import java.util.List;

@@ -2,7 +2,6 @@ package ru.practicum.event.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.practicum.StatCreateDto;
@@ -25,7 +24,7 @@ import java.util.Objects;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class PublicEventServiceImpl implements PublicEventService{
+public class PublicEventServiceImpl implements PublicEventService {
 
     final EventRepository eventRepository;
     final EventMapper eventMapper;
@@ -55,13 +54,11 @@ public class PublicEventServiceImpl implements PublicEventService{
         saveStat(ip, uri);
 
 
-
-        return events.stream().map(e-> eventMapper.toEventShortDto(e, userMapper.toUserShortDto(e.getInitiator()))).toList();
+        return events.stream().map(e -> eventMapper.toEventShortDto(e, userMapper.toUserShortDto(e.getInitiator()))).toList();
     }
 
-
     public void saveStat(String ip, String uri) {
-        StatCreateDto statCreateDto = new StatCreateDto( "ewm-main-service",uri,ip,LocalDateTime.now());
+        StatCreateDto statCreateDto = new StatCreateDto("ewm-main-service", uri, ip, LocalDateTime.now());
         statsClient.hit(statCreateDto);
     }
 }
