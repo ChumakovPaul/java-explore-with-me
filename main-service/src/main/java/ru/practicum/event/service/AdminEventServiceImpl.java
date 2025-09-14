@@ -6,7 +6,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.practicum.category.repository.CategoryRepository;
 import ru.practicum.event.dto.EventFullDto;
-import ru.practicum.event.dto.GetEventsParams;
+import ru.practicum.event.dto.AdminGetEventsParams;
 import ru.practicum.event.dto.UpdateEventAdminRequest;
 import ru.practicum.event.mapper.EventMapper;
 import ru.practicum.event.model.Event;
@@ -35,10 +35,9 @@ public class AdminEventServiceImpl implements AdminEventService {
     private final UserMapper userMapper;
 
     @Override
-    public List<EventFullDto> getEvents(GetEventsParams params) {
+    public List<EventFullDto> getEvents(AdminGetEventsParams params) {
         List<Long> users = params.getUsers() != null ? params.getUsers() : Collections.emptyList();
         List<State> states = params.getStates() != null ? params.getStates() : Collections.emptyList();
-        ;
         List<Long> categories = params.getCategories() != null ? params.getCategories() : Collections.emptyList();
         LocalDateTime rangeStart = params.getRangeStart();
         LocalDateTime rangeEnd = params.getRangeEnd();

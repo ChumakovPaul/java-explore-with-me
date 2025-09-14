@@ -41,6 +41,9 @@ public class PrivateEventServiceImpl implements PrivateEventService {
     public EventFullDto save(Long userId, NewEventDto newEventDto) {
         User user = userRepository.findById(userId).orElseThrow(() -> new DataNotFoundException("User with id=" + userId + " was not found"));
         Category category = categoryRepository.findById(newEventDto.getCategory()).orElseThrow(() -> new DataNotFoundException("Category with id=" + newEventDto.getCategory() + " was not found"));
+        if (newEventDto.getParticipantLimit() == null) {
+            newEventDto.setParticipantLimit(0L);
+        }
         Event event = eventRepository.save(eventMapper.toEvent(newEventDto, user, category));
         return eventMapper.toEventFullDto(event, userMapper.toUserShortDto(user));
     }

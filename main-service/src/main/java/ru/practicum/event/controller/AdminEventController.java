@@ -10,7 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.event.dto.EventFullDto;
-import ru.practicum.event.dto.GetEventsParams;
+import ru.practicum.event.dto.AdminGetEventsParams;
 import ru.practicum.event.dto.UpdateEventAdminRequest;
 import ru.practicum.event.model.State;
 import ru.practicum.event.service.AdminEventService;
@@ -37,7 +37,7 @@ public class AdminEventController {
                                         @RequestParam(defaultValue = "0") @PositiveOrZero int from,
                                         @RequestParam(defaultValue = "10") @Positive int size) {
         log.info("Start getting events: Users={}, States={}, Categories={}, rangeStart={}, rangeEnd={}, from={}, size={}", users, states, categories, rangeStart, rangeEnd, from, size);
-        GetEventsParams params = new GetEventsParams(users, states, categories, rangeStart, rangeEnd, from, size);
+        AdminGetEventsParams params = new AdminGetEventsParams(users, states, categories, rangeStart, rangeEnd, from, size);
         return eventService.getEvents(params);
     }
 
