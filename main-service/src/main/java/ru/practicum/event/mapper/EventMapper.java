@@ -35,17 +35,17 @@ public class EventMapper {
         event.setLocation(newEventDto.getLocation());
         if (newEventDto.getParticipantLimit() == null) {
             event.setParticipantLimit(0L);
-        }else {
+        } else {
             event.setParticipantLimit(newEventDto.getParticipantLimit());
         }
         if (newEventDto.getRequestModeration() == null) {
             event.setRequestModeration(true);
-        }else {
+        } else {
             event.setRequestModeration(newEventDto.getRequestModeration());
         }
         if (newEventDto.getPaid() == null) {
             event.setPaid(false);
-        }else {
+        } else {
             event.setPaid(newEventDto.getPaid());
         }
         event.setEventDate(newEventDto.getEventDate());

@@ -154,8 +154,8 @@ public class PublicEventServiceImpl implements PublicEventService {
         return events
                 .stream()
                 .collect(Collectors
-                        .toMap(event -> event.getId()
-                                , event -> requestRepository.countByEventIdAndStatus(event.getId(), Status.CONFIRMED)));
+                        .toMap(event -> event.getId(),
+                                event -> requestRepository.countByEventIdAndStatus(event.getId(), Status.CONFIRMED)));
     }
 
     private Long getEventIdFromDto(StatDto statDto) {
