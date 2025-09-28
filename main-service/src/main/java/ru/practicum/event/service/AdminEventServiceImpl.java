@@ -5,8 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.practicum.category.repository.CategoryRepository;
-import ru.practicum.event.dto.EventFullDto;
 import ru.practicum.event.dto.AdminGetEventsParams;
+import ru.practicum.event.dto.EventFullDto;
 import ru.practicum.event.dto.UpdateEventAdminRequest;
 import ru.practicum.event.mapper.EventMapper;
 import ru.practicum.event.model.Event;
@@ -14,13 +14,16 @@ import ru.practicum.event.model.State;
 import ru.practicum.event.model.StateAction;
 import ru.practicum.event.repository.EventRepository;
 import ru.practicum.exception.DataNotFoundException;
+import ru.practicum.exception.DateProblemException;
 import ru.practicum.exception.ForbiddenException;
+import ru.practicum.request.model.Status;
+import ru.practicum.request.repository.RequestRepository;
 import ru.practicum.user.mapper.UserMapper;
 import ru.practicum.user.repository.UserRepository;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 @Slf4j
@@ -33,14 +36,25 @@ public class AdminEventServiceImpl implements AdminEventService {
     private final CategoryRepository categoryRepository;
     private final EventMapper eventMapper;
     private final UserMapper userMapper;
+    private final RequestRepository requestRepository;
+    private final PublicEventService publicEventService;
+
 
     @Override
     public List<EventFullDto> getEvents(AdminGetEventsParams params) {
-        List<Long> users = params.getUsers() != null ? params.getUsers() : Collections.emptyList();
-        List<State> states = params.getStates() != null ? params.getStates() : Collections.emptyList();
-        List<Long> categories = params.getCategories() != null ? params.getCategories() : Collections.emptyList();
+
+        List<Long> users = params.getUsers();
+        List<State> states = params.getStates();
+        List<Long> categories = params.getCategories();
         LocalDateTime rangeStart = params.getRangeStart();
         LocalDateTime rangeEnd = params.getRangeEnd();
+        if (Objects.isNull(rangeStart)) {
+            rangeStart = LocalDateTime.now();
+            rangeEnd = rangeStart.plusYears(100);
+        }
+        if (rangeEnd.isBefore(rangeStart)) {
+            throw new DateProblemException("Конец диапазона не может быть раньше начала");
+        }
         int pageNumber = params.getFrom() / params.getSize();
         int pageSize = params.getSize();
         List<Event> events = eventRepository.getEvents(users,
@@ -50,8 +64,12 @@ public class AdminEventServiceImpl implements AdminEventService {
                         rangeEnd,
                         PageRequest.of(pageNumber, pageSize))
                 .getContent();
+        Map<Long, Long> views = publicEventService.getViews(events, rangeStart, rangeEnd);
         return events.stream()
-                .map(e -> eventMapper.toEventFullDto(e, userMapper.toUserShortDto(e.getInitiator())))
+                .map(e -> eventMapper.toEventFullDto(e,
+                        userMapper.toUserShortDto(e.getInitiator()),
+                        requestRepository.countByEventIdAndStatus(e.getId(), Status.CONFIRMED),
+                        views.getOrDefault(e.getId(), 0L)))
                 .toList();
     }
 
@@ -85,17 +103,25 @@ public class AdminEventServiceImpl implements AdminEventService {
         if (updateEventAdminRequest.getRequestModeration() != null) {
             event.setRequestModeration(updateEventAdminRequest.getRequestModeration());
         }
+        if (updateEventAdminRequest.getPaid() != null) {
+            event.setPaid(updateEventAdminRequest.getPaid());
+        }
         if (updateEventAdminRequest.getTitle() != null) {
             event.setTitle(updateEventAdminRequest.getTitle());
         }
         if (Objects.equals(updateEventAdminRequest.getStateAction(), StateAction.PUBLISH_EVENT.name())) {
             event.setState(State.PUBLISHED);
+            event.setPublishedOn(LocalDateTime.now());
         } else if (Objects.equals(updateEventAdminRequest.getStateAction(), StateAction.REJECT_EVENT.name())) {
             if (event.getState() == State.PUBLISHED)
                 throw new ForbiddenException("An event can only be canceled if it has not yet been published");
             event.setState(State.CANCELED);
         }
-        return eventMapper.toEventFullDto(eventRepository.save(event), userMapper.toUserShortDto(event.getInitiator()));
+        Map<Long, Long> views = publicEventService.getViews(List.of(event), null, null);
+        return eventMapper.toEventFullDto(eventRepository.save(event),
+                userMapper.toUserShortDto(event.getInitiator()),
+                requestRepository.countByEventIdAndStatus(event.getId(), Status.CONFIRMED),
+                views.getOrDefault(event.getId(), 0L));
     }
 
 }

@@ -25,6 +25,9 @@ public class StatsServiceImpl implements StatsService {
     }
 
     public List<StatDto> getStats(LocalDateTime start, LocalDateTime end, List<String> uris, Boolean unique) {
+        if (start.isAfter(end)) {
+            throw new IllegalArgumentException("The start date must be earlier than the end date.");
+        }
         return unique ? statsRepository.findStatsUnique(start, end, uris) : statsRepository.findStats(start, end, uris);
     }
 }

@@ -31,7 +31,7 @@ public class NewEventDto {
     @NotNull
     private Location location;
     private Boolean paid;
-//    @Positive
+    @PositiveOrZero
     private Long participantLimit;
     private Boolean requestModeration;
     @NotBlank(message = "Title must not be blank")

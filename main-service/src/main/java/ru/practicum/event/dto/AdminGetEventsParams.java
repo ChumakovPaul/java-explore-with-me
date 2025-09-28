@@ -1,5 +1,6 @@
 package ru.practicum.event.dto;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import ru.practicum.event.model.State;
@@ -17,4 +18,5 @@ public class AdminGetEventsParams {
     LocalDateTime rangeEnd;
     int from;
     int size;
+    HttpServletRequest request;
 }

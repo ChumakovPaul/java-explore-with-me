@@ -33,19 +33,32 @@ public class EventMapper {
         event.setDescription(newEventDto.getDescription());
         event.setState(State.PENDING);
         event.setLocation(newEventDto.getLocation());
-        event.setParticipantLimit(newEventDto.getParticipantLimit());
-        event.setRequestModeration(newEventDto.getRequestModeration());
-        event.setPaid(newEventDto.getPaid());
+        if (newEventDto.getParticipantLimit() == null) {
+            event.setParticipantLimit(0L);
+        }else {
+            event.setParticipantLimit(newEventDto.getParticipantLimit());
+        }
+        if (newEventDto.getRequestModeration() == null) {
+            event.setRequestModeration(true);
+        }else {
+            event.setRequestModeration(newEventDto.getRequestModeration());
+        }
+        if (newEventDto.getPaid() == null) {
+            event.setPaid(false);
+        }else {
+            event.setPaid(newEventDto.getPaid());
+        }
         event.setEventDate(newEventDto.getEventDate());
         event.setCreatedOn(LocalDateTime.now());
         return event;
     }
 
-    public EventFullDto toEventFullDto(Event event, UserShortDto userShortDto) {
+
+    public EventFullDto toEventFullDto(Event event, UserShortDto userShortDto, Long setConfirmedRequests, Long views) {
         EventFullDto eventFullDto = new EventFullDto();
         eventFullDto.setAnnotation(event.getAnnotation());
         eventFullDto.setCategory(categoryMapper.toCategoryDto(event.getCategory()));
-        eventFullDto.setConfirmedRequests(1L);
+        eventFullDto.setConfirmedRequests(setConfirmedRequests);
         eventFullDto.setCreatedOn(event.getCreatedOn().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
         eventFullDto.setDescription(event.getDescription());
         eventFullDto.setEventDate(event.getEventDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
@@ -54,25 +67,27 @@ public class EventMapper {
         eventFullDto.setLocation(event.getLocation());
         eventFullDto.setPaid(event.getPaid());
         eventFullDto.setParticipantLimit(event.getParticipantLimit());
-//        eventFullDto.setPublishedOn(event.getPublishedOn().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        if (event.getPublishedOn() != null) {
+            eventFullDto.setPublishedOn(event.getPublishedOn().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        }
         eventFullDto.setRequestModeration(event.getRequestModeration());
         eventFullDto.setState(event.getState().name());
         eventFullDto.setTitle(event.getTitle());
-        eventFullDto.setViews(1L);
+        eventFullDto.setViews(views);
         return eventFullDto;
     }
 
-    public EventShortDto toEventShortDto(Event event, UserShortDto userShortDto) {
+    public EventShortDto toEventShortDto(Event event, UserShortDto userShortDto, Long setConfirmedRequests, Long views) {
         EventShortDto eventShortDto = new EventShortDto();
         eventShortDto.setAnnotation(event.getAnnotation());
         eventShortDto.setCategory(categoryMapper.toCategoryDto(event.getCategory()));
-        eventShortDto.setConfirmedRequests(1L);
+        eventShortDto.setConfirmedRequests(setConfirmedRequests);
         eventShortDto.setEventDate(event.getEventDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
         eventShortDto.setId(event.getId());
         eventShortDto.setInitiator(userShortDto);
         eventShortDto.setPaid(event.getPaid());
         eventShortDto.setTitle(event.getTitle());
-        eventShortDto.setViews(1L);
+        eventShortDto.setViews(views);
         return eventShortDto;
     }
 }

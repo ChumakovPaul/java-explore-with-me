@@ -71,5 +71,4 @@ public class RequestServiceImpl implements RequestService {
         request.setStatus(Status.CANCELED);
         return requestMapper.toParticipationRequestDto(requestRepository.save(request));
     }
-
 }

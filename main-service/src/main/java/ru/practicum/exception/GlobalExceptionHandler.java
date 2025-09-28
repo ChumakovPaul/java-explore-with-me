@@ -72,6 +72,17 @@ public class GlobalExceptionHandler {
         );
     }
 
+    @ExceptionHandler(DateProblemException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleDateProblemException(DateProblemException ex) {
+        return new ErrorResponse(
+                HttpStatus.BAD_REQUEST.name(),
+                "Incorrectly made request.",
+                ex.getMessage(),
+                LocalDateTime.now().format(FORMATTER)
+        );
+    }
+
     public record ErrorResponse(String status, String reason, String message, String timestamp) {
     }
 }
