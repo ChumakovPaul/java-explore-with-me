@@ -139,7 +139,6 @@ public class PrivateEventServiceImpl implements PrivateEventService {
         Event event = eventRepository.findByIdAndInitiatorId(eventId, userId).orElseThrow(() -> new DataNotFoundException("Event with id=" + eventId + ", where initiator is user id=" + userId + "was not found"));
         List<ParticipationRequestDto> rejectedRequests = new ArrayList<>();
         List<ParticipationRequestDto> confirmedRequests = new ArrayList<>();
-        List<Long> requestsId = new ArrayList<>();
         Long confirmedRequestsQuantity = requestRepository.countByEventIdAndStatus(event.getId(), Status.CONFIRMED);
         if (eventRequestStatusUpdateRequest.getStatus().equals(Status.REJECTED.name())) {
             for (Long requestId : eventRequestStatusUpdateRequest.getRequestIds()) {
