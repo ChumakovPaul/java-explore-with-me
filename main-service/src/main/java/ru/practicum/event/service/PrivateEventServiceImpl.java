@@ -134,11 +134,13 @@ public class PrivateEventServiceImpl implements PrivateEventService {
     }
 
     @Override
-    public EventRequestStatusUpdateRequest updateRequests(Long userId, Long eventId, EventRequestStatusUpdateRequest eventRequestStatusUpdateRequest) {
+    public EventRequestStatusUpdateResult updateRequests(Long userId, Long eventId, EventRequestStatusUpdateRequest eventRequestStatusUpdateRequest) {
         User user = userRepository.findById(userId).orElseThrow(() -> new DataNotFoundException("User with id=" + userId + " was not found"));
         Event event = eventRepository.findByIdAndInitiatorId(eventId, userId).orElseThrow(() -> new DataNotFoundException("Event with id=" + eventId + ", where initiator is user id=" + userId + "was not found"));
-        List<Long> requests = new ArrayList<>();
-        Long confirmedRequests = requestRepository.countByEventIdAndStatus(event.getId(), Status.CONFIRMED);
+        List<ParticipationRequestDto> rejectedRequests = new ArrayList<>();
+        List<ParticipationRequestDto> confirmedRequests = new ArrayList<>();
+        List<Long> requestsId = new ArrayList<>();
+        Long confirmedRequestsQuantity = requestRepository.countByEventIdAndStatus(event.getId(), Status.CONFIRMED);
         if (eventRequestStatusUpdateRequest.getStatus().equals(Status.REJECTED.name())) {
             for (Long requestId : eventRequestStatusUpdateRequest.getRequestIds()) {
                 Request request = requestRepository.findById(requestId).orElseThrow(() -> new DataNotFoundException("Request with id=" + requestId + " was not found"));
@@ -147,21 +149,23 @@ public class PrivateEventServiceImpl implements PrivateEventService {
                 }
                 request.setStatus(Status.valueOf(eventRequestStatusUpdateRequest.getStatus()));
                 requestRepository.save(request);
-                requests.add(request.getId());
+                rejectedRequests.add(requestMapper.toParticipationRequestDto(request));
+//                requestsId.add(request.getId());
             }
         }
         if (eventRequestStatusUpdateRequest.getStatus().equals(Status.CONFIRMED.name())) {
             for (Long requestId : eventRequestStatusUpdateRequest.getRequestIds()) {
                 Request request = requestRepository.findById(requestId).orElseThrow(() -> new DataNotFoundException("Request with id=" + requestId + " was not found"));
-                if (event.getParticipantLimit() > confirmedRequests) {
+                if (event.getParticipantLimit() > confirmedRequestsQuantity) {
                     request.setStatus(Status.valueOf(eventRequestStatusUpdateRequest.getStatus()));
                     requestRepository.save(request);
-                    requests.add(request.getId());
+                    confirmedRequests.add(requestMapper.toParticipationRequestDto(request));
+//                    requestsId.add(request.getId());
                 } else {
                     throw new ForbiddenException("The participant limit has been reached");
                 }
             }
         }
-        return new EventRequestStatusUpdateRequest(requests, eventRequestStatusUpdateRequest.getStatus());
+        return new EventRequestStatusUpdateResult(confirmedRequests, rejectedRequests);
     }
 }
