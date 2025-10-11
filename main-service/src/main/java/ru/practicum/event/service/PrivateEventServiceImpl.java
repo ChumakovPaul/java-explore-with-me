@@ -46,8 +46,11 @@ public class PrivateEventServiceImpl implements PrivateEventService {
 
     @Override
     public EventFullDto save(Long userId, NewEventDto newEventDto) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new DataNotFoundException("User with id=" + userId + " was not found"));
-        Category category = categoryRepository.findById(newEventDto.getCategory()).orElseThrow(() -> new DataNotFoundException("Category with id=" + newEventDto.getCategory() + " was not found"));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new DataNotFoundException("User with id=" + userId + " was not found"));
+        Category category = categoryRepository.findById(newEventDto.getCategory())
+                .orElseThrow(() -> new DataNotFoundException(
+                        "Category with id=" + newEventDto.getCategory() + " was not found"));
         Event event = eventRepository.save(eventMapper.toEvent(newEventDto, user, category));
         Map<Long, Long> views = publicEventService.getViews(List.of(event), null, null);
         return eventMapper.toEventFullDto(event,
@@ -58,11 +61,11 @@ public class PrivateEventServiceImpl implements PrivateEventService {
 
     @Override
     public List<EventShortDto> getEvents(Long userId, int from, int size) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new DataNotFoundException("User with id=" + userId + " was not found"));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new DataNotFoundException("User with id=" + userId + " was not found"));
         List<Event> events = eventRepository.findAllByInitiatorId(userId, PageRequest.of(from / size, size))
                 .getContent();
         Map<Long, Long> views = publicEventService.getViews(events, null, null);
-
         return events.stream()
                 .map(event -> eventMapper.toEventShortDto(event,
                         userMapper.toUserShortDto(user),
@@ -74,18 +77,28 @@ public class PrivateEventServiceImpl implements PrivateEventService {
 
     @Override
     public EventFullDto getEvent(Long userId, Long eventId) {
-        UserShortDto user = userMapper.toUserShortDto(userRepository.findById(userId).orElseThrow(() -> new DataNotFoundException("User with id=" + userId + " was not found")));
-        Event event = eventRepository.findByIdAndInitiatorId(eventId, userId).orElseThrow(() -> new DataNotFoundException("Event with id=" + eventId + " was not found"));
+        UserShortDto user = userMapper.toUserShortDto(userRepository.findById(userId)
+                .orElseThrow(() -> new DataNotFoundException("User with id=" + userId + " was not found")));
+        Event event = eventRepository.findByIdAndInitiatorId(eventId, userId)
+                .orElseThrow(() -> new DataNotFoundException("Event with id=" + eventId + " was not found"));
         Map<Long, Long> views = publicEventService.getViews(List.of(event), null, null);
-        return eventMapper.toEventFullDto(event, user, requestRepository.countByEventIdAndStatus(event.getId(), Status.CONFIRMED), views.getOrDefault(event.getId(), 0L));
+        return eventMapper.toEventFullDto(event,
+                user,
+                requestRepository.countByEventIdAndStatus(event.getId(), Status.CONFIRMED),
+                views.getOrDefault(event.getId(), 0L));
     }
 
     @Override
     public EventFullDto updateEvent(Long userId, Long eventId, UpdateEventUserRequest updateEventUserRequest) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new DataNotFoundException("User with id=" + userId + " was not found"));
-        Event event = eventRepository.findByIdAndInitiatorId(eventId, userId).orElseThrow(() -> new DataNotFoundException("Event with id=" + eventId + ", where initiator is user id=" + userId + "was not found"));
-        if (updateEventUserRequest.getEventDate() != null && updateEventUserRequest.getEventDate().isBefore(LocalDateTime.now().plusHours(2))) {
-            throw new ForbiddenException("The date and time of the event cannot be earlier than two hours from the current moment");
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new DataNotFoundException("User with id=" + userId + " was not found"));
+        Event event = eventRepository.findByIdAndInitiatorId(eventId, userId)
+                .orElseThrow(() -> new DataNotFoundException(
+                        "Event with id=" + eventId + ", where initiator is user id=" + userId + "was not found"));
+        if (updateEventUserRequest.getEventDate() != null
+                && updateEventUserRequest.getEventDate().isBefore(LocalDateTime.now().plusHours(2))) {
+            throw new ForbiddenException(
+                    "The date and time of the event cannot be earlier than two hours from the current moment");
         }
         if (event.getState() != State.PENDING && event.getState() != State.CANCELED) {
             throw new ForbiddenException("You can only change a cancelled or pending event.");
@@ -94,7 +107,9 @@ public class PrivateEventServiceImpl implements PrivateEventService {
             event.setAnnotation(updateEventUserRequest.getAnnotation());
         }
         if (updateEventUserRequest.getCategory() != null) {
-            event.setCategory(categoryRepository.findById(updateEventUserRequest.getCategory()).orElseThrow(() -> new DataNotFoundException("Category with id=" + updateEventUserRequest.getCategory() + "was not found")));
+            event.setCategory(categoryRepository.findById(updateEventUserRequest.getCategory())
+                    .orElseThrow(() -> new DataNotFoundException(
+                            "Category with id=" + updateEventUserRequest.getCategory() + "was not found")));
         }
         if (updateEventUserRequest.getDescription() != null) {
             event.setDescription(updateEventUserRequest.getDescription());
@@ -122,44 +137,53 @@ public class PrivateEventServiceImpl implements PrivateEventService {
         Map<Long, Long> views = publicEventService.getViews(List.of(event), null, null);
         return eventMapper.toEventFullDto(eventRepository.save(event),
                 userMapper.toUserShortDto(event.getInitiator()),
-                requestRepository.countByEventIdAndStatus(event.getId(), Status.CONFIRMED), views.getOrDefault(event.getId(), 0L));
+                requestRepository.countByEventIdAndStatus(event.getId(), Status.CONFIRMED),
+                views.getOrDefault(event.getId(), 0L));
     }
 
     @Override
     public List<ParticipationRequestDto> getRequests(Long userId, Long eventId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new DataNotFoundException("User with id=" + userId + " was not found"));
-        Event event = eventRepository.findByIdAndInitiatorId(eventId, userId).orElseThrow(() -> new DataNotFoundException("Event with id=" + eventId + ", where initiator is user id=" + userId + "was not found"));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new DataNotFoundException("User with id=" + userId + " was not found"));
+        Event event = eventRepository.findByIdAndInitiatorId(eventId, userId)
+                .orElseThrow(() -> new DataNotFoundException(
+                        "Event with id=" + eventId + ", where initiator is user id=" + userId + "was not found"));
         List<Request> requests = requestRepository.findByEventId(eventId);
         return requests.stream().map(requestMapper::toParticipationRequestDto).toList();
     }
 
     @Override
-    public EventRequestStatusUpdateResult updateRequests(Long userId, Long eventId, EventRequestStatusUpdateRequest eventRequestStatusUpdateRequest) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new DataNotFoundException("User with id=" + userId + " was not found"));
-        Event event = eventRepository.findByIdAndInitiatorId(eventId, userId).orElseThrow(() -> new DataNotFoundException("Event with id=" + eventId + ", where initiator is user id=" + userId + "was not found"));
+    public EventRequestStatusUpdateResult updateRequests(Long userId,
+                                                         Long eventId,
+                                                         EventRequestStatusUpdateRequest eventRequestStatusUpdateRequest) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new DataNotFoundException("User with id=" + userId + " was not found"));
+        Event event = eventRepository.findByIdAndInitiatorId(eventId, userId)
+                .orElseThrow(() -> new DataNotFoundException(
+                        "Event with id=" + eventId + ", where initiator is user id=" + userId + "was not found"));
         List<ParticipationRequestDto> rejectedRequests = new ArrayList<>();
         List<ParticipationRequestDto> confirmedRequests = new ArrayList<>();
         Long confirmedRequestsQuantity = requestRepository.countByEventIdAndStatus(event.getId(), Status.CONFIRMED);
         if (eventRequestStatusUpdateRequest.getStatus().equals(Status.REJECTED.name())) {
             for (Long requestId : eventRequestStatusUpdateRequest.getRequestIds()) {
-                Request request = requestRepository.findById(requestId).orElseThrow(() -> new DataNotFoundException("Request with id=" + requestId + " was not found"));
+                Request request = requestRepository.findById(requestId)
+                        .orElseThrow(() -> new DataNotFoundException("Request with id=" + requestId + " was not found"));
                 if (request.getStatus().equals(Status.CONFIRMED)) {
                     throw new ForbiddenException("You cannot cancel an already accepted event registration request");
                 }
                 request.setStatus(Status.valueOf(eventRequestStatusUpdateRequest.getStatus()));
                 requestRepository.save(request);
                 rejectedRequests.add(requestMapper.toParticipationRequestDto(request));
-//                requestsId.add(request.getId());
             }
         }
         if (eventRequestStatusUpdateRequest.getStatus().equals(Status.CONFIRMED.name())) {
             for (Long requestId : eventRequestStatusUpdateRequest.getRequestIds()) {
-                Request request = requestRepository.findById(requestId).orElseThrow(() -> new DataNotFoundException("Request with id=" + requestId + " was not found"));
+                Request request = requestRepository.findById(requestId)
+                        .orElseThrow(() -> new DataNotFoundException("Request with id=" + requestId + " was not found"));
                 if (event.getParticipantLimit() > confirmedRequestsQuantity) {
                     request.setStatus(Status.valueOf(eventRequestStatusUpdateRequest.getStatus()));
                     requestRepository.save(request);
                     confirmedRequests.add(requestMapper.toParticipationRequestDto(request));
-//                    requestsId.add(request.getId());
                 } else {
                     throw new ForbiddenException("The participant limit has been reached");
                 }

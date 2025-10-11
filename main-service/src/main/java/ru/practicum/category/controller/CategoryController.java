@@ -54,7 +54,6 @@ public class CategoryController {
                                            @RequestParam(defaultValue = "10") @Positive int size) {
         log.info("Start getting categories:from={}, size={}", from, size);
         return categoryService.getCategories(from, size);
-
     }
 
     @GetMapping("/categories/{catId}")

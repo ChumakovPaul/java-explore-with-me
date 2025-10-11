@@ -24,7 +24,6 @@ public class RequestController {
     @ResponseStatus(HttpStatus.OK)
     public List<ParticipationRequestDto> getParticipationRequests(
             @PathVariable @Positive Long userId) {
-
         log.info("Start getting requests by user Id={}", userId);
         return requestService.getRequests(userId);
     }
@@ -34,7 +33,6 @@ public class RequestController {
     public ParticipationRequestDto addParticipationRequest(
             @PathVariable @Positive Long userId,
             @RequestParam Long eventId) {
-
         log.info("Start creating request by user Id={} for event id={}", userId, eventId);
         return requestService.addRequest(userId, eventId);
     }
@@ -42,9 +40,8 @@ public class RequestController {
     @PatchMapping("/{requestId}/cancel")
     @ResponseStatus(HttpStatus.OK)
     public ParticipationRequestDto cancelParticipationRequest(@PathVariable @Positive Long userId,
-                                                               @PathVariable Long requestId) {
-
-        log.info("Start cancel request id ={} by user Id={}",requestId, userId);
+                                                              @PathVariable Long requestId) {
+        log.info("Start cancel request id ={} by user Id={}", requestId, userId);
         return requestService.cancelRequest(userId, requestId);
     }
 }

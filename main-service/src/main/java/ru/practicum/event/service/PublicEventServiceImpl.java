@@ -49,7 +49,7 @@ public class PublicEventServiceImpl implements PublicEventService {
             rangeEnd = rangeStart.plusYears(100);
         }
         if (rangeEnd.isBefore(rangeStart)) {
-            throw new DateProblemException("Конец диапазона не может быть раньше начала");
+            throw new DateProblemException("The end of the range cannot be earlier than the beginning");
         }
         boolean onlyAvailable = params.isOnlyAvailable();
         Sort sort = params.getSort();
@@ -64,30 +64,22 @@ public class PublicEventServiceImpl implements PublicEventService {
                         State.PUBLISHED,
                         PageRequest.of(pageNumber, pageSize))
                 .getContent();
-
         Map<Long, Long> views = getViews(events, rangeStart, rangeEnd);
-        for (Long l : views.keySet()) {
-            System.out.println("Вот такие просмотры");
-            System.out.println(views.get(l));
-        }
-
         Map<Long, Long> confirmedRequests = getConfirmedRequests(events);
-        for (Long l : confirmedRequests.keySet()) {
-            System.out.println("Вот такие одобренные заявки");
-            System.out.println(confirmedRequests.get(l));
-        }
         if (Boolean.TRUE.equals(paid)) {
             events = events.stream().filter(e -> Boolean.TRUE.equals(e.getPaid())).toList();
         } else if (Boolean.FALSE.equals(paid)) {
             events = events.stream().filter(e -> Boolean.FALSE.equals(e.getPaid())).toList();
         }
         if (Boolean.TRUE.equals(onlyAvailable)) {
-            events = events.stream().filter(e -> e.getParticipantLimit() > confirmedRequests.get(e.getId())).toList();
+            events = events.stream()
+                    .filter(e -> e.getParticipantLimit() > confirmedRequests.get(e.getId())).toList();
         }
         if (Sort.EVENT_DATE.equals(sort)) {
             events.stream().sorted(Comparator.comparing(Event::getEventDate));
         } else if (Sort.VIEWS.equals(sort)) {
-            events.stream().sorted(Comparator.comparing(event -> views.getOrDefault(event.getId(), 0L)));
+            events.stream()
+                    .sorted(Comparator.comparing(event -> views.getOrDefault(event.getId(), 0L)));
         }
         saveStat(ip, uri);
         return events.stream().map(e ->
@@ -101,7 +93,8 @@ public class PublicEventServiceImpl implements PublicEventService {
 
     @Override
     public EventFullDto getEvent(Long eventId, String ip, String uri) {
-        Event event = eventRepository.findById(eventId).orElseThrow(() -> new DataNotFoundException("Event with id=" + eventId + "was not found"));
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new DataNotFoundException("Event with id=" + eventId + "was not found"));
         if (!Objects.equals(event.getState(), State.PUBLISHED)) {
             throw new DataNotFoundException("This event was not be published");
         }
@@ -109,7 +102,8 @@ public class PublicEventServiceImpl implements PublicEventService {
         Map<Long, Long> confirmedRequests = getConfirmedRequests(List.of(event));
         EventFullDto result = eventMapper.toEventFullDto(event,
                 userMapper.toUserShortDto(event.getInitiator()),
-                requestRepository.countByEventIdAndStatus(event.getId(), Status.CONFIRMED), views.getOrDefault(event.getId(), 0L));
+                requestRepository.countByEventIdAndStatus(event.getId(), Status.CONFIRMED),
+                views.getOrDefault(event.getId(), 0L));
         result.setConfirmedRequests(confirmedRequests.get(event.getId()));
         result.setViews(views.getOrDefault(event.getId(), 0L));
         result.setViews(result.getViews() == null ? 0 : result.getViews());
@@ -129,9 +123,6 @@ public class PublicEventServiceImpl implements PublicEventService {
         List<String> uris = events.stream()
                 .map(event -> "/events/" + event.getId())
                 .toList();
-        for (String s : uris) {
-            System.out.println(s);
-        }
         if (Objects.isNull(start)) {
             stringStart = LocalDateTime.now().minusYears(100).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
             stringEnd = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
@@ -150,12 +141,12 @@ public class PublicEventServiceImpl implements PublicEventService {
 
     @Override
     public Map<Long, Long> getConfirmedRequests(List<Event> events) {
-
         return events
                 .stream()
                 .collect(Collectors
                         .toMap(event -> event.getId(),
-                                event -> requestRepository.countByEventIdAndStatus(event.getId(), Status.CONFIRMED)));
+                                event -> requestRepository.countByEventIdAndStatus(event.getId(),
+                                        Status.CONFIRMED)));
     }
 
     private Long getEventIdFromDto(StatDto statDto) {

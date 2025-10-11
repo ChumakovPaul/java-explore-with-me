@@ -16,6 +16,3 @@ public class NewCategoryDto {
     @Size(min = 1, max = 50, message = "Category name should contain from 1 to 50 characters")
     private String name;
 }
-
-
-

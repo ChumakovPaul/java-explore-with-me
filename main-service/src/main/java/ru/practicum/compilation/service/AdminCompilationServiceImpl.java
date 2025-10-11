@@ -52,7 +52,7 @@ public class AdminCompilationServiceImpl implements AdminCompilationService {
 
     @Override
     public void delete(Long compId) {
-            Compilation compilation = compilationRepository.findById(compId).orElseThrow(() -> new DataNotFoundException("Compilation with id=" + compId + " was not found"));
+        Compilation compilation = compilationRepository.findById(compId).orElseThrow(() -> new DataNotFoundException("Compilation with id=" + compId + " was not found"));
         compilationRepository.deleteById(compId);
     }
 
@@ -77,5 +77,4 @@ public class AdminCompilationServiceImpl implements AdminCompilationService {
         Map<Long, Long> views = publicEventService.getViews(List.copyOf(compilation.getEvents()), null, null);
         return compilationMapper.toCompilationDto(compilationRepository.save(compilation), confirmedRequests, views);
     }
-
 }

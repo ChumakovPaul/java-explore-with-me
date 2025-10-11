@@ -33,7 +33,6 @@ public class PublicCompilationServiceImpl implements PublicCompilationService {
         Set<Event> events = compilation.getEvents();
         Map<Long, Long> confirmedRequests = publicEventService.getConfirmedRequests(List.copyOf(events));
         Map<Long, Long> views = publicEventService.getViews(List.copyOf(events), null, null);
-
         return compilationMapper.toCompilationDto(compilation, confirmedRequests, views);
     }
 

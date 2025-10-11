@@ -53,7 +53,7 @@ public class AdminEventServiceImpl implements AdminEventService {
             rangeEnd = rangeStart.plusYears(100);
         }
         if (rangeEnd.isBefore(rangeStart)) {
-            throw new DateProblemException("Конец диапазона не может быть раньше начала");
+            throw new DateProblemException("The end of the range cannot be earlier than the beginning");
         }
         int pageNumber = params.getFrom() / params.getSize();
         int pageSize = params.getSize();
@@ -123,6 +123,4 @@ public class AdminEventServiceImpl implements AdminEventService {
                 requestRepository.countByEventIdAndStatus(event.getId(), Status.CONFIRMED),
                 views.getOrDefault(event.getId(), 0L));
     }
-
 }
-
