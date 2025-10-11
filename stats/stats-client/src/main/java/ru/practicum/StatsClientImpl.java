@@ -23,7 +23,7 @@ public class StatsClientImpl implements StatsClient {
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     private final RestClient restClient;
 
-    public StatsClientImpl(@Value("${explore-with-me.stats-server.url:http://localhost:9090}") String clientUrl) {
+    public StatsClientImpl(@Value("${stats-server.url:http://localhost:9090}") String clientUrl) {
         this.restClient = RestClient.builder()
                 .baseUrl(clientUrl)
                 .build();
