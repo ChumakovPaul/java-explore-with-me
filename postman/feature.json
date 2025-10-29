@@ -426,7 +426,7 @@
 				"method": "DELETE",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8080/comments/:userId/:eventId",
+					"raw": "http://localhost:8080/comments/:userId/:commentId",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -435,7 +435,7 @@
 					"path": [
 						"comments",
 						":userId",
-						":eventId"
+						":commentId"
 					],
 					"variable": [
 						{
@@ -443,8 +443,8 @@
 							"value": "{{uid}}"
 						},
 						{
-							"key": "eventId",
-							"value": "{{eid}}"
+							"key": "commentId",
+							"value": "{{comid}}"
 						}
 					]
 				}
