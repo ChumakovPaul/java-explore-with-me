@@ -97,10 +97,12 @@
 					}
 				},
 				"url": {
-					"raw": "{{baseUrl}}/comments/:userId/:eventId",
+					"raw": "http://localhost:8080/comments/:userId/:eventId",
+					"protocol": "http",
 					"host": [
-						"{{baseUrl}}"
+						"localhost"
 					],
+					"port": "8080",
 					"path": [
 						"comments",
 						":userId",
