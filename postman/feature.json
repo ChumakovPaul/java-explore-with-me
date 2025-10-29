@@ -199,10 +199,12 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{baseUrl}}/comments/:userId/:commentId",
+					"raw": "http://localhost:8080/comments/:userId/:commentId",
+					"protocol": "http",
 					"host": [
-						"{{baseUrl}}"
+						"localhost"
 					],
+					"port": "8080",
 					"path": [
 						"comments",
 						":userId",
@@ -316,10 +318,12 @@
 					}
 				},
 				"url": {
-					"raw": "{{baseUrl}}/comments/:userId/:commentId",
+					"raw": "http://localhost:8080/comments/:userId/:commentId",
+					"protocol": "http",
 					"host": [
-						"{{baseUrl}}"
+						"localhost"
 					],
+					"port": "8080",
 					"path": [
 						"comments",
 						":userId",
@@ -422,10 +426,12 @@
 				"method": "DELETE",
 				"header": [],
 				"url": {
-					"raw": "{{baseUrl}}/comments/:userId/:eventId",
+					"raw": "http://localhost:8080/comments/:userId/:eventId",
+					"protocol": "http",
 					"host": [
-						"{{baseUrl}}"
+						"localhost"
 					],
+					"port": "8080",
 					"path": [
 						"comments",
 						":userId",
@@ -531,10 +537,12 @@
 					}
 				],
 				"url": {
-					"raw": "{{baseUrl}}/comments/user/:userId",
+					"raw": "http://localhost:8080/comments/user/:userId",
+					"protocol": "http",
 					"host": [
-						"{{baseUrl}}"
+						"localhost"
 					],
+					"port": "8080",
 					"path": [
 						"comments",
 						"user",
@@ -634,10 +642,12 @@
 				"method": "DELETE",
 				"header": [],
 				"url": {
-					"raw": "{{baseUrl}}/comments/:commentId",
+					"raw": "http://localhost:8080/comments/:commentId",
+					"protocol": "http",
 					"host": [
-						"{{baseUrl}}"
+						"localhost"
 					],
+					"port": "8080",
 					"path": [
 						"comments",
 						":commentId"
@@ -729,10 +739,12 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{baseUrl}}/comments/event/:eventId",
+					"raw": "http://localhost:8080/comments/event/:eventId",
+					"protocol": "http",
 					"host": [
-						"{{baseUrl}}"
+						"localhost"
 					],
+					"port": "8080",
 					"path": [
 						"comments",
 						"event",
