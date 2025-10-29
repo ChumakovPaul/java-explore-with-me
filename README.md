@@ -1,3 +1,7 @@
+Ссылка на PR:
+https://github.com/ChumakovPaul/java-explore-with-me/pull/3
+
+
 # Comments — README
 
 **Краткое описание**
