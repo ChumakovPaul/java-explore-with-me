@@ -40,8 +40,7 @@ public class CategoryController {
 
     @PatchMapping("/admin/categories/{catId}")
     @ResponseStatus(HttpStatus.OK)
-    public CategoryDto updateCategory(@PathVariable @Positive Long catId,
-                                      @RequestBody @Valid NewCategoryDto newCategoryDto) {
+    public CategoryDto updateCategory(@PathVariable @Positive Long catId, @RequestBody @Valid NewCategoryDto newCategoryDto) {
         log.info("Start updating category {}, id= {}", newCategoryDto, catId);
         CategoryDto category = categoryService.update(catId, newCategoryDto);
         log.info("Finish updating category {}, id= {}", newCategoryDto, catId);
@@ -50,8 +49,7 @@ public class CategoryController {
 
     @GetMapping("/categories")
     @ResponseStatus(HttpStatus.OK)
-    public List<CategoryDto> getCategories(@RequestParam(defaultValue = "0") @PositiveOrZero int from,
-                                           @RequestParam(defaultValue = "10") @Positive int size) {
+    public List<CategoryDto> getCategories(@RequestParam(defaultValue = "0") @PositiveOrZero int from, @RequestParam(defaultValue = "10") @Positive int size) {
         log.info("Start getting categories:from={}, size={}", from, size);
         return categoryService.getCategories(from, size);
     }
